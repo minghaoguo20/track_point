@@ -175,14 +175,14 @@ this repo, but also have a slightly different format.
     <td><a href="https://storage.googleapis.com/oe-training-public/Molmo-0924/MolmoE-1B-0924.tar">fine-tuned</a></td>
   </tr>
   <tr>
+    <td><a href="https://huggingface.co/allenai/Molmo-7B-O-0924">Molmo-7B-O-0924</a></td>
+    <td><a href="https://storage.googleapis.com/oe-training-public/Molmo-0924/Molmo-7B-O-0924-Pretrained.tar">pretrained</a></td>
+    <td><a href="https://storage.googleapis.com/oe-training-public/Molmo-0924/Molmo-7B-O-0924.tar">fine-tuned</a></td>
+  </tr>
+  <tr>
     <td><a href="https://huggingface.co/allenai/Molmo-7B-D-0924">Molmo-7B-D-0924</a></td>
     <td><a href="https://storage.googleapis.com/oe-training-public/Molmo-0924/Molmo-7B-D-0924-Pretrained.tar">pretrained</a></td>
     <td><a href="https://storage.googleapis.com/oe-training-public/Molmo-0924/Molmo-7B-D-0924.tar">fine-tuned</a></td>
-  </tr>
-  <tr>
-    <td><a href="https://huggingface.co/allenai/Molmo-7B-O-0924">Molmo-7B-D-0924</a></td>
-    <td><a href="https://storage.googleapis.com/oe-training-public/Molmo-0924/Molmo-7B-O-0924-Pretrained.tar">pretrained</a></td>
-    <td><a href="https://storage.googleapis.com/oe-training-public/Molmo-0924/Molmo-7B-O-0924.tar">fine-tuned</a></td>
   </tr>
   <tr>
     <td><a href="https://huggingface.co/allenai/Molmo-72B-0924">Molmo-72B-0924</a></td>
