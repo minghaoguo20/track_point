@@ -155,13 +155,18 @@ class PixMoDocs(Dataset):
 class PixMoPoints(Dataset):
 
     @classmethod
-    def download(cls, n_procs=1, check_sha=True, n_val=2048, cache_only=False):
+    def download(cls, n_procs=1, check_sha=True, n_val=2048, cache_only=False, hold_out_pointing_eval=True):
         collection_method = ["pointing", "counting"]
         local_names = [join(PIXMO_DATASETS, f"points-{name}") for name in collection_method]
         if all(exists(x) for x in local_names):
             return
         ds = datasets.load_dataset("allenai/pixmo-points", split="train")
         filenames = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
+        if hold_out_pointing_eval:
+            eval_ds = datasets.load_dataset("allenai/pixmo-points-eval", split="test")
+            for url in eval_ds["image_url"]:
+                if url in filenames:
+                    del filenames[url]
         for method, local_name in zip(collection_method, local_names):
             logging.info(f"Building subset {method}")
             ds_for_method = ds.filter(lambda x: x == method, input_columns="collection_method")
@@ -412,4 +417,41 @@ class PixMoAskMeAnything(Dataset):
                     conv["question"] = prefix + conv["question"]
         return ex
 
+
+class PixMoPointsEval(Dataset):
+    @classmethod
+    def download(cls, n_procs=1, check_sha=True, cache_only=False):
+        local_name = join(PIXMO_DATASETS, "pixmo-points-eval")
+        if exists(local_name):
+            return
+        ds = datasets.load_dataset("allenai/pixmo-points-eval", split="test")
+        url_to_filename = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
+        ds = ds.filter(lambda x: x in url_to_filename, input_columns=["image_url"])
+        ds = ds.add_column("image", [url_to_filename[x] for x in ds["image_url"]])
+        save_local_dataset(ds, local_name, n_procs)
+
+    def __init__(self, keep_in_memory=False):
+        self.data = datasets.load_from_disk(
+            join(PIXMO_DATASETS, "pixmo-points-eval"), keep_in_memory=keep_in_memory)
+
+    def __len__(self):
+        return len(self.data)
+
+    def get(self, item, rng):
+        ex = self.data[item]
+        points = ex["points"]
+        messages = []
+        points = np.stack([[x["x"] for x in points], [x["y"] for x in points]], -1)
+        return dict(
+            image=ex["image"],
+            label=ex["label"],
+            points=points,
+            point_scale=100,
+            style="pointing",
+            metadata=dict(
+                points=points,
+                masks=np.array(ex["masks"], dtype=bool),
+                image_url=ex["image_url"],
+            )
+        )
 
